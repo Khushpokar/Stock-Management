@@ -15,6 +15,7 @@ class User(models.Model):
     def _str_(self):
         return f"User ID: {self.id} (username: {self.username})"
 
+
 class OTP(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     otp_code = models.CharField(max_length=4)
