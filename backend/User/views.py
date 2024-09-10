@@ -20,9 +20,9 @@ def register_view(request):
         username = data.get('username')
         email = data.get('email')
         password = data.get('password')
-        password_confirmation = data.get('c_password')
-        if password != password_confirmation:    
-            return JsonResponse({"error": "Passwords do not match."},status=400)
+        # password_confirmation = data.get('c_password')
+        # if password != password_confirmation:    
+        #     return JsonResponse({"error": "Passwords do not match."},status=400)
         
         if User.objects.filter(email=email).exists() or User.objects.filter(username=username).exists():
             return JsonResponse({"error": "Email or username is already registered."}, status=409)
@@ -57,16 +57,15 @@ def register_view(request):
         except Exception as e:
             return JsonResponse({"error": "Failed to send OTP. Please try again later."}, status=500)
         
-        return JsonResponse({"message": "User created successfully"}, status=201)
+        return JsonResponse({"message": "User created successfully","userid":user.id}, status=201)
 
     return JsonResponse({'message':"Can't Register!"},status=405)
 
 def login_view(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        username = data.get('username')
-        password = data.get('password')
-        print(username)
+        username = data.get('emailOrUsername')
+        password = data.get('passwords')
         if not username :
             return JsonResponse({"error": "Username or email is required."}, status=400)
 
@@ -84,9 +83,26 @@ def login_view(request):
             user = User.objects.filter(email=username, password=hashed_password).first()
 
         if user:
+            if not user.is_verified:
+                return JsonResponse({"message": "User authenticated successfully."}, status=201)
             return JsonResponse({"message": "User authenticated successfully."}, status=200)
         else:
             return JsonResponse({"error": "Invalid username/email or password."}, status=401)
     return JsonResponse({"error": "Invalid request method."}, status=405)
 
-   
+def verify_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_otp = data.get("otp")
+        user_id = data.get("user_id")
+        if not user_otp:
+            return JsonResponse({"error":"Otp is required."}, status=400)
+        
+        dataOpt = OTP.objects.get(user=user_id)
+        if dataOpt.otp_code == user_otp:
+            userdata = User.objects.get(id=user_id)
+            userdata.is_verified = True
+            userdata.save()
+            dataOpt.delete()                
+            return JsonResponse({"message": "User authenticated successfully."}, status=200)
+        return JsonResponse({"error":"Invaild Otp."}, status=401)

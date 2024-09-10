@@ -3,35 +3,32 @@ import './AuthForm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';  
 import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SignUpSchema , LoginSchema } from '../utils/Schema';
 
 
 function AuthForm() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  // Form fields for Sign Up
-  const [formData, setFormData] = useState({
-    firstname: '',
-    lastname: '',
-    username: '',
-    email: '',
-    password: '',
-    c_password: ''
+
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(isSignUp ? SignUpSchema : LoginSchema),
+    mode:"onChange"
   });
 
-  const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState('');
-
-  // Form fields for Sign In
-  const [signInData, setSignInData] = useState({
-    username: '',
-    password: ''
-  });
-
-  const [signInErrors, setSignInErrors] = useState({});
-
+  
+  
 
   const handleSignInClick = () => {
     setIsSignUp(true);
+    setErrorMessage("");
     setTimeout(() => {
       document.getElementById("sign_in").style.display = "none";
   }, 200);
@@ -39,200 +36,153 @@ function AuthForm() {
 
   const handleSignUpClick = () => {
     setIsSignUp(false);
+    setErrorMessage("");
     setTimeout(() => {
       document.getElementById("sign_in").style.display="";
   }, 230);
   };
-  // Handle input change for Sign Up form
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
 
-  // Handle input change for Sign In form
-  const handleSignInInputChange = (e) => {
-    const { name, value } = e.target;
-    setSignInData({ ...signInData, [name]: value });
-  };
 
-  // Email validation function
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
-
-  // Handle Sign Up
-   // Handle Sign Up
-   const handleSignUp = () => {
-    const newErrors = {};
-
-    if (!formData.firstname) newErrors.firstname = 'First name is required.';
-    if (!formData.lastname) newErrors.lastname = 'Last name is required.';
-    if (!formData.username) newErrors.username = 'Username is required.';
-    if (!formData.email) {
-      newErrors.email = 'Email is required.';
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = 'Invalid email format.';
-    }
-    if (!formData.password) {
-      newErrors.password = 'Password is required.';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters.';
-    }
-    if (formData.c_password !== formData.password) {
-      newErrors.c_password = 'Passwords do not match.';
-    }
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      // Send the form data to the backend using Axios
-      axios.post('http://127.0.0.1:8000/signup/', formData)
-        .then(response => {
-          // Handle successful response
-          setSuccessMessage('Sign Up successful!');
-          navigate("/verify");
-        })
-        .catch(error => {
-          if (error.response && error.response.data) {
-            const { status } = error.response;
-            const newErrors = {};
-
-            if (status === 400) {
-              newErrors.c_password = 'Passwords do not match.';
-            } else if (status === 409) {
-              newErrors.email = error.response.data.error; // Assuming error.response.data.error contains the email error
-              newErrors.username = error.response.data.error; // Assuming error.response.data.error contains the username error
-            }
-            else{
-              newErrors.email = error.response.data.error;
-            }
-            console.log(newErrors);
-            setErrors(newErrors);
-          } else {
-            setErrors({ apiError: 'An error occurred. Please try again later.' });
-          }
-        });
-    }
-  };
-
+  const onSubmit = async (data) => {
+    try {
+      console.log(data);
+      const response = await axios({
+        method: 'POST',
+        url: 'http://127.0.0.1:8000/signup/',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: {
+            firstname:data.firstname,
+            lastname:data.lastname,
+            username:data.username,
+            email:data.email,
+            password:data.password,
+        },
+    });
+    console.log(response.status);
+      if (response.status === 201) {
+        // setErrorMessage(''); 
+        localStorage.setItem('user_id', response.data.userid);
+        console.log('Success:', response.data);
+        navigate('/verify');
+      }
+    } catch (error) {
+      if (error.response.status === 409) {
+        setErrorMessage('Email or Username is already registered.');
+        console.log(error.message);
+      } else {
+        console.error('Error:', error.message);
+      }
+    }
+  };
   // Handle Sign In
-  const handleSignIn = () => {
-    const newSignInErrors = {};
+  const onSubmitlogin = async (data) => {
+    try {
+      // Send the form data to the backend using Axios
+      console.log(data);
+      const response = await axios.post('http://127.0.0.1:8000/login/', data);
+      // Handle successful response
+      console.log('Sign In successful:', response.data);
+      localStorage.setItem("user_id", response.data.userid);
+      navigate("/verify");
+    } catch (error) {
+      // Log the entire error to understand its structure
 
-    // if (!signInData.email) {
-    //   newSignInErrors.email = 'Email is required.';
-    // } else if (!validateEmail(signInData.email)) {
-    //   newSignInErrors.email = 'Invalid email format.';
-    // }
-    if (!signInData.password) {
-      newSignInErrors.password = 'Password is required.';
-    }
+      const newErrors = {};
 
-    setSignInErrors(newSignInErrors);
+      if (error.response) {
+        const { status, data } = error.response;
+        setErrorMessage(data.error);
+       
+      } else {
+        setErrorMessage('An unexpected error occurred. Please try again later.');
+      }
 
-    if (Object.keys(newSignInErrors).length === 0) {
-      // Perform the sign-in logic here
-      axios.post('http://127.0.0.1:8000/login/', signInData)
-        .then(response => {
-          // Handle successful response
-          setSuccessMessage('Sign Up successful!');
-          navigate("/verify");
-        })
-        .catch(error => {
-          console.log(error);
-        });
-      console.log('Sign In successful:', signInData);
+     
     }
   };
 
   return (
     <div className={`container ${isSignUp ? 'right-panel-active' : ''}`} id="container">
       <div className="form-container sign-up-container">
-        <form id='sign_up' action="#" onSubmit={(e) => e.preventDefault()}>
-          <h2>Create Account</h2>
+        <form id='sign_up' action="#" onSubmit={handleSubmit(onSubmit)}>
+        <h2>Create Account</h2>
           <input
             type="text"
             placeholder="First name"
-            name="firstname"
-            value={formData.firstname}
-            onChange={handleInputChange}
+            {...register('firstname')}
           />
-          {errors.firstname && <p className="error-text">{errors.firstname}</p>}
+          {errors.firstname && <p className="error-text">{errors.firstname.message}</p>}
 
           <input
             type="text"
             placeholder="Last name"
-            name="lastname"
-            value={formData.lastname}
-            onChange={handleInputChange}
+            {...register('lastname')}
           />
-          {errors.lastname && <p className="error-text">{errors.lastname}</p>}
+          {errors.lastname && <p className="error-text">{errors.lastname.message}</p>}
 
           <input
             type="text"
             placeholder="Username"
-            name="username"
-            value={formData.username}
-            onChange={handleInputChange}
+            {...register('username')}
           />
-          {errors.username && <p className="error-text">{errors.username}</p>}
+          {errors.username && <p className="error-text">{errors.username.message}</p>}
 
           <input
             type="email"
             placeholder="Email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
+            {...register('email')}
           />
-          {errors.email && <p className="error-text">{errors.email}</p>}
+          {errors.email && <p className="error-text">{errors.email.message}</p>}
 
           <input
             type="password"
             placeholder="Password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
+            {...register('password')}
           />
-          {errors.password && <p className="error-text">{errors.password}</p>}
+          {errors.password && <p className="error-text">{errors.password.message}</p>}
 
           <input
             type="password"
             placeholder="Confirm Password"
-            name="c_password"
-            value={formData.c_password}
-            onChange={handleInputChange}
+            {...register('c_password')}
           />
-          {errors.c_password && <p className="error-text">{errors.c_password}</p>}
-          {errors.apiError && <p className="error-text">{errors.apiError}</p>}
-          {successMessage && <p className="success-text">{successMessage}</p>}
-          <button type="button" className="co" onClick={handleSignUp}>Sign Up</button>
+          {errors.c_password && <p className="error-text">{errors.c_password.message}</p>}
+          {/* {errors.apiError && <p className="error-text">{errors.apiError}</p>} */}
+          {errorMessage && (
+                    <div className="text-danger mt-1 mb-2" style={{ fontSize: 'small' }}>
+                        {errorMessage}
+                    </div>
+                    )}
+          <button type="submit" className="co">Sign Up</button>
           
         </form>
       </div>
       <div className="form-container sign-in-container">
-        <form id='sign_in' action="#" onSubmit={(e) => e.preventDefault()}>
-          <h2>Sign in</h2>
+        <form id='sign_in' action="#" onSubmit={handleSubmit(onSubmitlogin)}>
+         <h2>Sign In</h2>
           <input
             type="text"
             placeholder="Username Or Email"
-            name="username"
-            value={signInData.username}
-            onChange={handleSignInInputChange}
+            {...register('emailOrUsername')}
           />
-          {signInErrors.email && <p className="error-text">{signInErrors.email}</p>}
+          {errors.emailOrUsername && <p className="error-text">{errors.emailOrUsername.message}</p>}
 
           <input
             type="password"
             placeholder="Password"
-            name="password"
-            value={signInData.password}
-            onChange={handleSignInInputChange}
+            {...register('passwords')}
           />
-          {signInErrors.password && <p className="error-text">{signInErrors.password}</p>}
-
+          {errors.passwords && <p className="error-text">{errors.passwords.message}</p>}
+          {errorMessage && (
+                    <div className="text-danger mt-1 mb-2" style={{ fontSize: 'small' }}>
+                        {errorMessage}
+                    </div>
+                    )}
           <a href="#">Forgot your password?</a>
-          <button type="button" className="co" onClick={handleSignIn}>Sign In</button>
+
+          <button type="submit" className="co">Sign In</button>
         </form>
       </div>
       <div className="overlay-container">

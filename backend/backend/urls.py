@@ -20,5 +20,6 @@ from User import views as vs
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('signup/', vs.register_view),
-    path('login/', vs.login_view)
+    path('login/', vs.login_view),
+    path('verify/',vs.verify_view)
 ]
