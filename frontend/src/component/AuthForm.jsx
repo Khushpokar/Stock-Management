@@ -81,11 +81,19 @@ function AuthForm() {
     try {
       // Send the form data to the backend using Axios
       console.log(data);
+      localStorage.clear();
       const response = await axios.post('http://127.0.0.1:8000/login/', data);
       // Handle successful response
       console.log('Sign In successful:', response.data);
       localStorage.setItem("user_id", response.data.userid);
-      navigate("/verify");
+      if(response.status === 201)
+      {
+        navigate('/verify');
+      }
+      if(response.status === 200){
+        console.log(response.data.token);
+        localStorage.setItem('token',response.data.token);
+      }
     } catch (error) {
       // Log the entire error to understand its structure
 

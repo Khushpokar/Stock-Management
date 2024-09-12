@@ -37,6 +37,7 @@ const OtpVerification = () => {
             );
             // Handle successful verification
             console.log('OTP verified:', response.data);
+            localStorage.setItem('token',response.data.token);
         } catch (error) {
             // Handle errors
             if (error.response) {
