@@ -188,7 +188,7 @@ function AuthForm() {
                         {errorMessage}
                     </div>
                     )}
-          <a href="#">Forgot your password?</a>
+          <a href="forgot-password">Forgot your password?</a>
 
           <button type="submit" className="co">Sign In</button>
         </form>

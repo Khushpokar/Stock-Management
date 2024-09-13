@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios'; // Import Axios
 import './OtpVerification.css'; // Import the CSS file
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link, useNavigate } from 'react-router-dom';
 
-const OtpVerification = () => {
+const ResetOtp = () => {
+    const navigate = useNavigate();
     const [otp, setOtp] = useState(['', '', '', '']); // State to hold OTP values
     const userid = localStorage.getItem("user_id");
     // Function to handle OTP input change
@@ -26,7 +28,7 @@ const OtpVerification = () => {
         e.preventDefault();
         const otpString = otp.join('');
         try {
-            const response = await axios.post('http://127.0.0.1:8000/verify/', // Replace with your actual endpoint
+            const response = await axios.post('http://127.0.0.1:8000/resetOtp/', // Replace with your actual endpoint
                 { otp: otpString ,user_id:userid},
                 {
                     headers: {
@@ -35,8 +37,7 @@ const OtpVerification = () => {
                 }
             );
             // Handle successful verification
-            console.log('OTP verified:', response.data);
-            localStorage.setItem('token',response.data.token);
+            navigate('/reset-password')
         } catch (error) {
             // Handle errors
             if (error.response) {
@@ -100,4 +101,4 @@ const OtpVerification = () => {
     );
 };
 
-export default OtpVerification;
+export default ResetOtp;

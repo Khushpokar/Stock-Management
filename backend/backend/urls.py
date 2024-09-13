@@ -21,5 +21,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('signup/', vs.register_view),
     path('login/', vs.login_view),
-    path('verify/',vs.verify_view)
+    path('verify/',vs.verify_view),
+    path('resend/',vs.resend_Email),
+    path('checkEmail/',vs.CheckEmail),
+    path('resetPassword/',vs.resetPassword),
+    path('resetOtp/',vs.resetVerify)
 ]

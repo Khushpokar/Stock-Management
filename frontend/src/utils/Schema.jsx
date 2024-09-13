@@ -17,11 +17,11 @@ export const SignUpSchema = z
       .min(8, { message: "Password must be at least 8 characters." })
       .max(20, {
         message: "Password must be max 20 characters long.",
-      }),
-    //   .regex(
-    //     /^(?=.[a-z])(?=.[A-Z])(?=.\d)[A-Za-z\d@$!%?&]{8,20}$/,
-    //     "Password must include one small letter, one uppercase letter, and one number."
-    //   ),
+      })
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/,
+        "Password must include one small letter, one uppercase letter, and one number."
+      ),
       c_password: z.string(),
   })
   .refine((data) => data.password === data.c_password, {
@@ -45,7 +45,10 @@ export const SignUpSchema = z
       ),
     passwords: z
       .string()
-      .min(8, { message: "Password must be at least 8 characters." }),
+      .min(8, { message: "Password must be at least 8 characters." }).regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/,
+        "Password must include one small letter, one uppercase letter, and one number."
+      ),
   });
 
 
@@ -69,11 +72,11 @@ export const SignUpSchema = z
         message: "Password must be max 20 characters long.",
       })
       .regex(
-        /^(?=.[a-z])(?=.[A-Z])(?=.\d)[A-Za-z\d@$!%?&]{8,20}$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/,
         "Password must include one small letter, one uppercase letter, and one number."
       ),
-    confirmPassword: z.string(),
-  }).refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
+      c_password: z.string(),
+  }).refine((data) => data.password === data.c_password, {
+    path: ["c_password"],
     message: "Passwords don't match.",
   });

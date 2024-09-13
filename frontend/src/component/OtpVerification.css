@@ -3,7 +3,7 @@ body {
 }
 
 .card {
-    background-color: #ff6600; /* Orange background color */
+    background-color: #FF4B2B; /* Orange background color */
     border-radius: 8px;
 }
 
@@ -37,4 +37,10 @@ form{
 
 .text-light {
     color: #ffffff;
+}
+
+mark{
+    background-color: #fff !important;
+    border: #ff6600;
+    border-radius: 4px;
 }
