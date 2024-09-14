@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path ,include
 from User import views as vs
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +25,6 @@ urlpatterns = [
     path('resend/',vs.resend_Email),
     path('checkEmail/',vs.CheckEmail),
     path('resetPassword/',vs.resetPassword),
-    path('resetOtp/',vs.resetVerify)
+    path('resetOtp/',vs.resetVerify),
+    path('stockGraph/', include('stockData.urls')),
 ]

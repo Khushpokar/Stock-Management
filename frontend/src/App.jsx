@@ -6,6 +6,10 @@ import OtpVerification from './component/OtpVerification.jsx';
 import ForgotPassword from './component/ForgotPassword.jsx';
 import ResetPassword from './component/ResetPassword.jsx';
 import ResetOtp from './component/ResetOtp.jsx';
+import Watchlist from './component/Wishlist/Watchlist.jsx';
+import StockGraph from './component/StockGraph/StockGraph.jsx';
+
+// import Groww from './component/Groww.jsx';
 
 function App(){
   return (
@@ -16,6 +20,8 @@ function App(){
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/Otp-verify" element={<ResetOtp />} />
+      <Route path="/watchlist" element={<Watchlist />} />
+      <Route path="/graph/:ticker" element={<StockGraph />} />
       </Routes>
      </Router>
   );

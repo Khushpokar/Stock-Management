@@ -1,0 +1,18 @@
+from django.urls import path, include 
+from rest_framework.routers import DefaultRouter
+from .views import *
+
+router = DefaultRouter()
+router.register(r'graph', GraphView, basename='reactview')
+
+urlpatterns = [ 
+	path('overview/', GraphView.ApiOverview, name="something"), 
+	path('add/', GraphView.add_items, name="Create"), 
+	path('view/<str:ticker>/', GraphView.view_all_items, name="View"), 
+	path('view_all_ticker/', GraphView.get_all_tickers, name="View_all_ticker"), 
+	path('update/', GraphView.update_items, name="Update"), 
+	path('deleteid/<int:pk>/', GraphView.delete_graph, name="DeleteID"),
+	path('delete/', GraphView.delete_items, name="Delete"),
+	path('deleteTicker/', GraphView.delete_items_by_ticker, name="DeleteTicker"),
+    path('', include(router.urls)),
+]
