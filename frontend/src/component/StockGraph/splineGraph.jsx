@@ -20,7 +20,7 @@ class Spline extends Component {
             // console.log(ticker)
             const response = await axios.get(`http://localhost:8000/stockGraph/view/${ticker}/`);
             const fetchedData = response.data.datetime;
-            console.log(response.data)
+            // console.log(response.data)
             const lastDataPointForDate = {};
 
             fetchedData.forEach(item => {
@@ -36,7 +36,7 @@ class Spline extends Component {
             const filteredDataPoints = Object.values(lastDataPointForDate).sort((a, b) => a.x - b.x);
 
             this.setState({ dataPoints: filteredDataPoints }, () => {
-                console.log('Filtered Data Points:', this.state.dataPoints);
+                // console.log('Filtered Data Points:', this.state.dataPoints);
             });
 
         } catch (error) {

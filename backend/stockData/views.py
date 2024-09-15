@@ -275,3 +275,16 @@ class GraphView(viewsets.ModelViewSet):
             return Response({'tickers': list(tickers)}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @api_view(['GET'])
+    def get_graph_data(request):
+        graphs = Graph.objects.all()[:6]
+        serializer = GraphSerializer2(graphs, many=True)
+        return Response({'tickers': serializer.data}, status=status.HTTP_200_OK)
+    
+
+    @api_view(['GET'])
+    def most_traded_stock(request):
+        graphs = Graph.objects.all()[6:10]
+        serializer = GraphSerializer2(graphs, many=True)
+        return Response({'tickers': serializer.data}, status=status.HTTP_200_OK)

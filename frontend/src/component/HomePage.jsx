@@ -1,48 +1,65 @@
-import React from 'react'
-import { Search, User } from 'lucide-react'
-import { Button } from "../utils/Button"
-import { Input } from "../utils/Input"
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Search, User } from 'lucide-react';
+import { Button } from "../utils/Button";
+import { Input } from "../utils/Input";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../utils/Card"
-import '../tailwind.css'
-const marketIndices = [
-  {
-    "longName": "Dow Jones Industrial Average",
-    "closePrice": "41394.00",
-    "raise": "50.00"
-  },
-  {
-    "longName": "S&P 500",
-    "closePrice": "4510.32",
-    "raise": "15.20"
-  },
-  {
-    "longName": "NASDAQ Composite",
-    "closePrice": "14035.65",
-    "raise": "28.50"
-  },
-  {
-    "longName": "Russell 2000",
-    "closePrice": "1875.23",
-    "raise": "10.75"
-  },
-  {
-    "longName": "NYSE Composite",
-    "closePrice": "16235.45",
-    "raise": "45.30"
-  },
-  {
-    "longName": "FTSE 100",
-    "closePrice": "7450.20",
-    "raise": "22.15"
+} from "../utils/Card";
+import '../tailwind.css';
+import { useNavigate } from 'react-router-dom';
+
+// Function to fetch data
+const HomePagedata = async () => {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/stockGraph/home/');
+    return response.data.tickers; // Adjust the return to match your API structure
+  } catch (error) {
+    console.error('Error fetching homepage data:', error);
+    return []; // Return an empty array on error
   }
-]
+};
+
+const HomePagedata2 = async () => {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/stockGraph/home/most_traded_stock/');
+    return response.data.tickers; // Adjust the return to match your API structure
+  } catch (error) {
+    console.error('Error fetching homepage data:', error);
+    return []; // Return an empty array on error
+  }
+};
+
 
 export default function HomePage() {
+  // State to hold market indices
+  const [marketIndices, setMarketIndices] = useState([]);
+  const [mostTradedStock, setMostTradedStock] = useState([]);
+
+  const navigate = useNavigate();
+
+const handleStockClick = (ticker) => {
+  navigate(`/graph/${ticker}`); // Navigate to the graph page with the selected ticker
+};
+  // Fetch data on component mount
+  useEffect(() => {
+    const fetchMarketData = async () => {
+      const data = await HomePagedata();
+      setMarketIndices(data); // Update state with the fetched data
+    };
+
+    const fetchMarketData2 = async () => {
+      const data2 = await HomePagedata2();
+      setMostTradedStock(data2); // Update state with the fetched data
+    };
+
+    fetchMarketData();
+    fetchMarketData2();
+  }, []); // Empty dependency array ensures this runs only on component mount
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b" style={{ backgroundColor: 'antiquewhite' }}>
@@ -79,11 +96,16 @@ export default function HomePage() {
                 {marketIndices.map((index, i) => (
                   <Card key={i} className="w-[250px] flex-shrink-0">
                     <CardHeader className="pb-2">
+                    <button onClick={() => handleStockClick(index.ticker)}>
                       <CardTitle className="text-sm font-medium">{index.longName}</CardTitle>
+                    </button>
+                      
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">{index.closePrice}</div>
-                      <div className="text-sm text-green-500">+{index.raise} (0.12%)</div>
+                      <div className={`text-lg ${index.raise_value < 0 ? 'text-red-500' : 'text-green-500'}`}>
+                        {index.raise_value} ({Math.abs(index.raise_value / index.closePrice * 100).toFixed(2)}%)
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
@@ -111,14 +133,18 @@ export default function HomePage() {
         <div className="mt-12">
           <h2 className="text-2xl font-semibold mb-4">Most Traded Stocks</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {['Apple Inc.', 'Microsoft Corp.', 'Amazon.com Inc.', 'Alphabet Inc.'].map((stock, index) => (
+            {mostTradedStock.map((stock, index) => (
               <Card key={index}>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">{stock}</CardTitle>
+                <button onClick={() => handleStockClick(stock.ticker)}>
+                  <CardTitle className="text-sm font-medium">{stock.longName}</CardTitle>
+                  </button>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">₹1,096.05</div>
-                  <div className="text-sm text-green-500">+91.25 (9.08%)</div>
+                  <div className="text-2xl font-bold">{stock.closePrice}</div>
+                  <div className={`text-lg ${stock.raise_value < 0 ? 'text-red-500' : 'text-green-500'}`}>
+                        {stock.raise_value} ({Math.abs(stock.raise_value / stock.closePrice * 100).toFixed(2)}%)
+                      </div>
                 </CardContent>
               </Card>
             ))}
@@ -126,5 +152,5 @@ export default function HomePage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
