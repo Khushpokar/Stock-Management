@@ -1,7 +1,6 @@
-import React from 'react';
+import React ,{ useEffect} from 'react';
 import axios from 'axios'; // Import Axios
-import './OtpVerification.css'; // Import the CSS file
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { loadStyles } from './loadstyles';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
@@ -15,6 +14,16 @@ const ForgotPassword = () => {
     resolver: zodResolver(ResetMailSchema),
     mode: "onChange",
   });
+
+  useEffect(() => {
+    // Call loadStyles with an array of paths to your CSS files
+    const cleanupStyles = loadStyles();
+
+    // Cleanup the CSS when component is unmounted
+    return () => {
+      cleanupStyles();
+    };
+  }, []);
 
   // Handle form submission
   const onSubmit = async (data) => {

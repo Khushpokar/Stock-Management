@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import './AuthForm.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';  
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SignUpSchema , LoginSchema } from '../utils/Schema';
+import { useEffect } from 'react';
+import { loadStyles } from './loadstyles';
 
 
 function AuthForm() {
@@ -13,6 +13,15 @@ function AuthForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Call loadStyles with an array of paths to your CSS files
+    const cleanupStyles = loadStyles();
+
+    // Cleanup the CSS when component is unmounted
+    return () => {
+      cleanupStyles();
+    };
+  }, []);
 
   const {
     register,

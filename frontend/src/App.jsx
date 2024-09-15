@@ -8,6 +8,7 @@ import ResetPassword from './component/ResetPassword.jsx';
 import ResetOtp from './component/ResetOtp.jsx';
 import Watchlist from './component/Wishlist/Watchlist.jsx';
 import StockGraph from './component/StockGraph/StockGraph.jsx';
+import Groww from './component/Groww.jsx';
 
 // import Groww from './component/Groww.jsx';
 
@@ -17,6 +18,7 @@ function App(){
       <Routes>
       <Route path="/" element={<AuthForm />} />
       <Route path="/verify" element={<OtpVerification />} />
+      <Route path="/groww" element={<Groww />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/Otp-verify" element={<ResetOtp />} />

@@ -1,7 +1,6 @@
-import React from 'react';
+import React ,{useEffect} from 'react';
 import axios from 'axios'; // Import Axios
-import './OtpVerification.css'; // Import the CSS file
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { loadStyles } from './loadstyles';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,6 +13,17 @@ const ResetPassword =()=>{
         resolver: zodResolver(ResetPasswordSchema),
         mode: "onChange",
       });
+
+      useEffect(() => {
+        // Call loadStyles with an array of paths to your CSS files
+        const cleanupStyles = loadStyles();
+    
+        // Cleanup the CSS when component is unmounted
+        return () => {
+          cleanupStyles();
+        };
+      }, []);
+
     const navigate = useNavigate()
       // Handle form submission
       const onSubmit = async (data) => {

@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios'; // Import Axios
-import './OtpVerification.css'; // Import the CSS file
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { loadStyles } from './loadstyles';
+ import { useEffect } from 'react';
 
 const OtpVerification = () => {
+    useEffect(() => {
+        // Call loadStyles with an array of paths to your CSS files
+        const cleanupStyles = loadStyles();
+    
+        // Cleanup the CSS when component is unmounted
+        return () => {
+          cleanupStyles();
+        };
+      }, []);
+
     const [otp, setOtp] = useState(['', '', '', '']); // State to hold OTP values
     const userid = localStorage.getItem("user_id");
     // Function to handle OTP input change

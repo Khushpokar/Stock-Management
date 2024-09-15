@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaEdit, FaPlus } from 'react-icons/fa';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { bootstrapload } from '../loadstyles.jsx';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import {
     fetchAllDataOfGraph,
@@ -162,6 +163,11 @@ const Watchlist = () => {
 
     useEffect(() => {
         fetchData();
+        const styles = bootstrapload()
+
+        return () => {
+          styles();
+        };
     }, []);
 
     const handleAddStock = async () => {

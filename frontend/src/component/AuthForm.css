@@ -37,25 +37,30 @@ p {
 span {
   font-size: 12px;
 }
+a:hover {
+  color: #535bf2;
+}
 
 a {
-  color: #333;
+  color: #646cff;
+  font-weight: 500;
   font-size: 14px;
-  text-decoration: none;
+  text-decoration: inherit !important;
   margin: 15px 0;
 }
 
 button {
-  border-radius: 20px;
-  border: 1px solid #FF4B2B;
+  border-radius: 8px !important;
+  border: 1px solid transparent;
   background-color: #FF4B2B;
   color: #FFFFFF;
-  font-size: 12px;
-  font-weight: bold;
-  padding: 12px 45px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  padding: 0.6em 1.2em;
   letter-spacing: 1px;
   text-transform: uppercase;
-  transition: transform 80ms ease-in;
+  transition: border-color 0.25s;
 }
 
 button:active {
@@ -89,6 +94,42 @@ input {
   margin: 8px 0 !important;
   width: 100%;
 }
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button:hover {
+  opacity: .8;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
 
 .container {
   background-color: #fff;
