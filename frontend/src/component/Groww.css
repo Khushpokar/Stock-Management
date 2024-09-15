@@ -215,6 +215,10 @@ footer{
 .padding{
     padding: 1.76%;
 }
+.logoutbtn{
+  font-size: 1.5rem !important;
+  margin-top: 1.75rem !important;
+}
 @media screen and (max-width: 768px) {
   .navbar-brand {
     margin-left: 20px;

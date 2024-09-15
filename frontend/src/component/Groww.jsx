@@ -55,16 +55,15 @@ function Groww() {
               <ul className="navbar-nav ml-auto">
                 <li><a href="#" className="nav-item nav-link active">Home</a></li>
                 <li><a href="#" className="nav-item nav-link">About Us</a></li>
-            
-                
                 <li><a href="#" className="nav-item nav-link">Contact</a></li>
+                <li><a href='#' className='btn btn-lg btn-danger  logoutbtn'>LogOut</a></li>
               </ul>
             </div>
           </div>
         </nav>
       </header>
 
-      <div style={{ backgroundColor: 'black', height: '1000px' }}></div>
+      <div style={{ backgroundColor: 'white', height: '1000px' }}></div>
 
       <footer className="d-flex">
         <div className="container d-flex justify-content-center">

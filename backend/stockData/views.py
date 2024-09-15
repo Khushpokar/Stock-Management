@@ -61,6 +61,7 @@ class GraphView(viewsets.ModelViewSet):
             longName = info.get('longName')
             liveData = None
             data_status = request.data.get('status')
+            priceTobook = 0.00
 
             if data_status == '':
                 return Response({'error': 'Status is required'}, status=status.HTTP_400_BAD_REQUEST)
@@ -77,13 +78,18 @@ class GraphView(viewsets.ModelViewSet):
             pct_change = returnDay.sum()
             rs_change = pct_change*data.iloc[0]
 
+            try:
+                priceTobook=round(info['priceToBook'],2)
+            except :
+                pass
+
             graph, created = Graph.objects.get_or_create(
                 ticker=ticker,
                 longName=longName,
                 status=data_status,
                 shortName = info["shortName"],
                 closePrice = round(liveData['Close'].iloc[-1]),
-                priceToBook = round(info['priceToBook'],2),
+                priceToBook = priceTobook,
                 fiftyTwoWeekLow =round( info['fiftyTwoWeekLow']),
                 fiftyTwoWeekHigh =round(info['fiftyTwoWeekHigh']),
                 pct_change=pct_change,

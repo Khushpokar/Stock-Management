@@ -157,7 +157,6 @@ const Watchlist = () => {
           const final = await fetchAllDataOfGraph(item); // Await the async operation
           data2.push(final); // Push the resolved data into data2 array
       }
-
       setStocks(data2);
     };
 
@@ -215,14 +214,14 @@ const Watchlist = () => {
                     <Row>
                         <StockColumn><strong>Company</strong></StockColumn>
                         <StockColumn><strong>Price</strong></StockColumn>
-                        <StockColumn><strong>Price to Book</strong></StockColumn>
+                        <StockColumn><strong>% change</strong></StockColumn>
                     </Row>
                     <StockListContainer>
                         {Array.isArray(stocks) && stocks.map((stock, index) => (
                             <StockBox key={index}>
                                 <StockColumn><StockName onClick={() => handleStockClick(stock.ticker)}>{stock.longName}</StockName></StockColumn>
                                 <StockColumn><StockPrice>{stock.closePrice}</StockPrice></StockColumn>
-                                <StockColumn><StockChange>{stock.priceToBook}</StockChange></StockColumn>
+                                <StockColumn><StockChange>{stock.pct_change}</StockChange></StockColumn>
                                 <DeleteButton
                                     stockBoxHover={StockBox}
                                     onClick={(e) => {

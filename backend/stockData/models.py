@@ -8,7 +8,7 @@ class Graph(models.Model):
     status = models.CharField(max_length=10, default='')
     shortName = models.CharField(max_length=500)
     closePrice = models.DecimalField(max_digits=10, decimal_places=2)
-    priceToBook = models.DecimalField(max_digits=10, decimal_places=2)
+    priceToBook = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     fiftyTwoWeekLow = models.DecimalField(max_digits=10, decimal_places=2)
     fiftyTwoWeekHigh = models.DecimalField(max_digits=10, decimal_places=2)
     pct_change = models.DecimalField(max_digits=10, decimal_places=4)
