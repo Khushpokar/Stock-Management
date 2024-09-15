@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'User',
     'stockData',
     'rest_framework',
+    'userStockData',
 ]
 
 MIDDLEWARE = [

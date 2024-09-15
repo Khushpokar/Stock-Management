@@ -27,4 +27,5 @@ urlpatterns = [
     path('resetPassword/',vs.resetPassword),
     path('resetOtp/',vs.resetVerify),
     path('stockGraph/', include('stockData.urls')),
+    path('userStock/', include('userStockData.urls')),
 ]
