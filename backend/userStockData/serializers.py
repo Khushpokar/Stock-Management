@@ -4,7 +4,7 @@ from .models import Wishlist ,UserStock
 class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
-        fields = ['user', 'stock', 'added_at']
+        fields = ['user', 'ticker', 'added_at']
         read_only_fields = ['added_at']  # Prevent users from manually setting this field
 
 class UserStockSerializer(serializers.ModelSerializer):
