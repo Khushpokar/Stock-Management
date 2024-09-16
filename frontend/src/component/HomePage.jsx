@@ -33,6 +33,15 @@ const HomePagedata2 = async () => {
   }
 };
 
+const Update_Data = async () => {
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/stockGraph/update/');
+      return response.data.status; // Adjust the return to match your API structure
+    } catch (error) {
+      console.error('Error fetching homepage data:', error);
+      return []; // Return an empty array on error
+    }
+  };
 
 export default function HomePage() {
   // State to hold market indices
@@ -46,9 +55,10 @@ const handleStockClick = (ticker) => {
 };
   // Fetch data on component mount
   useEffect(() => {
+
     const fetchMarketData = async () => {
-      const data = await HomePagedata();
-      setMarketIndices(data); // Update state with the fetched data
+        const data = await HomePagedata();
+        setMarketIndices(data); // Update state with the fetched data
     };
 
     const fetchMarketData2 = async () => {
@@ -56,8 +66,20 @@ const handleStockClick = (ticker) => {
       setMostTradedStock(data2); // Update state with the fetched data
     };
 
+    const update = async ()=>{
+        const data = await Update_Data();
+    }
+    // update();
     fetchMarketData();
     fetchMarketData2();
+
+    const interval = setInterval(() => {
+        update();
+        fetchMarketData();
+        fetchMarketData2();
+    }, 15000);
+
+    return () => clearInterval(interval);
   }, []); // Empty dependency array ensures this runs only on component mount
 
   return (
