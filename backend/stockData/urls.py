@@ -16,6 +16,7 @@ urlpatterns = [
 	path('deleteTicker/', GraphView.delete_items_by_ticker, name="DeleteTicker"),
 	path('home/', GraphView.get_graph_data, name="home"), 
 	path('home/most_traded_stock/', GraphView.most_traded_stock, name="homeMostTradedStock"), 
-	path('home/all_stock/', GraphView.all_stock, name="homeAllStock"), 
+	path('home/all_stock/', GraphView.all_stock, name="homeAllStock"),
+    path('wishlist/user_wishlist/', GraphView.user_wishlist, name='user_wishlist'), 
     path('', include(router.urls)),
 ]

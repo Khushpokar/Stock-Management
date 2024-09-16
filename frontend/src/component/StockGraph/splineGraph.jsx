@@ -20,7 +20,13 @@ class Spline extends Component {
             // console.log(ticker)
             const response = await axios.get(`http://localhost:8000/stockGraph/view/${ticker}/`);
             const fetchedData = response.data.datetime;
+            const datak =fetchedData[fetchedData.length-1].datetimedata[0]
+            datak.fiftyTwoWeekHigh =response.data.fiftyTwoWeekHigh;
+            datak.fiftyTwoWeekLow= response.data.fiftyTwoWeekLow;
+            datak.prev_close = fetchedData[fetchedData.length-2].datetimedata[0].close
+            console.log(datak);
             // console.log(response.data)
+
             const lastDataPointForDate = {};
 
             fetchedData.forEach(item => {

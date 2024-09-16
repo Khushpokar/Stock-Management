@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from django.utils.dateparse import parse_datetime
 import yfinance as yf
 import datetime as datetime
+from User.models import User
+from userStockData.models import Wishlist
 import time
 
 class GraphView(viewsets.ModelViewSet):
@@ -226,6 +228,27 @@ class GraphView(viewsets.ModelViewSet):
         graphs = Graph.objects.all()
         serializer = GraphSerializer2(graphs, many=True)
         return Response({'tickers': serializer.data}, status=status.HTTP_200_OK)
+    
+
+    @api_view(['POST'])
+    def user_wishlist(request):
+        try:
+            user_id = request.data.get('user_id')
+            print(user_id)
+            # Get the user object
+            user = User.objects.get(id=user_id)
+
+            # Filter Wishlist entries for the user
+            wishlist = Wishlist.objects.filter(user=user)
+
+            tickers = wishlist.values_list('ticker', flat=True)
+            graphs = Graph.objects.filter(ticker__in=tickers)
+            serializer = GraphSerializer2(graphs, many=True)
+            return Response({'tickers': serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': 'User not found'}, status=404)
+
+
     
 class Update_data():
     def __init__(self) -> None:
