@@ -10,6 +10,7 @@ import Watchlist from './component/Wishlist/Watchlist.jsx';
 import StockGraph from './component/StockGraph/StockGraph.jsx';
 // import Groww from './component/Groww.jsx';
 import HomePage from './component/HomePage.jsx';
+import AllStocksPage from './component/AllStocksPage.jsx';
 // import './tailwind.css'; 
 // import Groww from './component/Groww.jsx';
 
@@ -26,6 +27,7 @@ function App(){
       <Route path="/Otp-verify" element={<ResetOtp />} />
       <Route path="/watchlist" element={<Watchlist />} />
       <Route path="/graph/:ticker" element={<StockGraph />} />
+      <Route path="/allstock" element={<AllStocksPage />} />
       </Routes>
      </Router>
   );

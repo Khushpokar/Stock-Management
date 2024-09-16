@@ -221,6 +221,12 @@ class GraphView(viewsets.ModelViewSet):
         serializer = GraphSerializer2(graphs, many=True)
         return Response({'tickers': serializer.data}, status=status.HTTP_200_OK)
     
+    @api_view(['GET'])
+    def all_stock(request):
+        graphs = Graph.objects.all()
+        serializer = GraphSerializer2(graphs, many=True)
+        return Response({'tickers': serializer.data}, status=status.HTTP_200_OK)
+    
 class Update_data():
     def __init__(self) -> None:
         # self.DataBase()

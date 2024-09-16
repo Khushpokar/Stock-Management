@@ -73,13 +73,13 @@ const handleStockClick = (ticker) => {
     fetchMarketData();
     fetchMarketData2();
 
-    const interval = setInterval(() => {
-        update();
-        fetchMarketData();
-        fetchMarketData2();
-    }, 15000);
+    // const interval = setInterval(() => {
+    //     update();
+    //     fetchMarketData();
+    //     fetchMarketData2();
+    // }, 15000);
 
-    return () => clearInterval(interval);
+    // return () => clearInterval(interval);
   }, []); // Empty dependency array ensures this runs only on component mount
 
   return (
