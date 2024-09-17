@@ -23,3 +23,15 @@ class Wishlist(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.ticker} (Wishlist)"
+    
+class Transaction(models.Model):
+    class TransactionType(models.TextChoices):
+        CREDITED = 'credited', 'Credited'
+        DEBITED = 'debited', 'Debited'
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_type = models.CharField(max_length=10, choices=TransactionType.choices)
+
+    def __str__(self):
+        return f'{self.user.username} - {self.transaction_type} - {self.amount}'

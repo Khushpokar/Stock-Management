@@ -130,7 +130,9 @@ class GraphView(viewsets.ModelViewSet):
         u=Update_data()
         if u.DataBase():
             return Response({'status': 'Data added successfully'}, status=status.HTTP_201_CREATED)
-    
+        else:
+            return Response({'status': 'Data not added successfully'}, status=status.HTTP_201_CREATED)
+        
     @api_view(['POST'])
     def delete_items(request):
         try:
@@ -264,30 +266,11 @@ class Update_data():
     def DataBase(self):
         tickers =list( self.fetch_all_tickers())  # Reference the method using 'self'
         for ticker in tickers:
-            if self.Delete(ticker=ticker):
-                self.add(ticker=ticker)
-            else:
-                pass
+            self.add(ticker=ticker)            
         return True    
-    def Delete(self,ticker):
-        stock = yf.Ticker(ticker)
-        info = stock.info
-        ticker = info['symbol']
-        
-        try:
-            # Find the Graph instance by ticker
-            graph = Graph.objects.get(ticker=ticker)
-            
-            # Delete all related GraphDateData and GraphDate instances
-            for graph_date in graph.datetime.all():
-                graph_date.datetimedata.all().delete()
-            graph.datetime.all().delete()
-            
-            # Delete the Graph instance itself
-            graph.delete()
-            return True
-        except:
-            return False
+    
+
+
     def add(self,ticker):
         try:
             stock = yf.Ticker(ticker)
@@ -312,17 +295,19 @@ class Update_data():
             except :
                 pass
 
-            graph, created = Graph.objects.get_or_create(
-                ticker=ticker,
-                longName=longName,
-                status=data_status,
-                shortName = info["shortName"],
-                closePrice = round(liveData['Close'].iloc[-1]),
-                priceToBook = priceTobook,
-                fiftyTwoWeekLow =round( info['fiftyTwoWeekLow']),
-                fiftyTwoWeekHigh =round(info['fiftyTwoWeekHigh']),
-                pct_change=pct_change,
-                rs_change=rs_change
+            graph, created = Graph.objects.update_or_create(
+                ticker=ticker,  # This is the unique lookup field
+                defaults={
+                    'longName': longName,
+                    'status': data_status,
+                    'shortName': info["shortName"],
+                    'closePrice': round(liveData['Close'].iloc[-1]),
+                    'priceToBook': priceTobook,
+                    'fiftyTwoWeekLow': round(info['fiftyTwoWeekLow']),
+                    'fiftyTwoWeekHigh': round(info['fiftyTwoWeekHigh']),
+                    'pct_change': pct_change,
+                    'rs_change': rs_change
+                }
             )
 
             for col, row in liveData.iterrows():
@@ -335,18 +320,19 @@ class Update_data():
                     graph=graph,
                     date=date
                 )
-
-                GraphDateData.objects.create(
-                    datedata=graph_date,
-                    open=row['Open'],
-                    high=row['High'],
-                    low=row['Low'],
-                    close=row['Close'],
-                    adj_close=row['Adj Close'],
-                    volume=row['Volume']
-                )
+                if date_created:
+                    GraphDateData.objects.create(
+                        datedata=graph_date,
+                        open=row['Open'],
+                        high=row['High'],
+                        low=row['Low'],
+                        close=row['Close'],
+                        adj_close=row['Adj Close'],
+                        volume=row['Volume']
+                    )
 
             return True
 
         except Exception as e:
+            print(e)
             return False          
