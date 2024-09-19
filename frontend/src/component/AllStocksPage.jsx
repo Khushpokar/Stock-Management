@@ -6,12 +6,26 @@ import { useNavigate } from 'react-router-dom';
 const allStockData = async () => {
     try {
       const response = await axios.get('http://127.0.0.1:8000/stockGraph/home/all_stock/');
+      
       return response.data.tickers; // Adjust the return to match your API structure
     } catch (error) {
       console.error('Error fetching homepage data:', error);
       return []; // Return an empty array on error
     }
   };
+
+const user_id =  localStorage.getItem('user_id');
+
+const addwatchlist =  async (ticker) => {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/userStock/wishlist/add/');
+    return response.data.tickers; // Adjust the return to match your API structure
+  } catch (error) {
+    console.error('Error fetching homepage data:', error);
+    return []; // Return an empty array on error
+  }
+}
+
 
 export default function AllStocksPage() {
 const navigate = useNavigate();
@@ -34,7 +48,7 @@ const handleStockClick = (ticker) => {
     // }
     // update();
     fetchMarketData();
-    
+    console.log(user_id);
 
     // const interval = setInterval(() => {
     //     update();
@@ -108,7 +122,6 @@ const handleStockClick = (ticker) => {
                     <div className="flex space-x-2">
                       <button className="px-3 py-1 bg-blue-600 text-white rounded-md">Buy</button>
                       <button className="px-3 py-1 border border-gray-300 text-gray-600 rounded-md flex items-center space-x-1">
-                        <Heart className="h-4 w-4" />
                         <span>Watchlist</span>
                       </button>
                     </div>
