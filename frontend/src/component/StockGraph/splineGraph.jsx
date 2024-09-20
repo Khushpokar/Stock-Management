@@ -131,12 +131,14 @@ class Spline extends Component {
               <header className="border-b" style={{ backgroundColor: 'antiquewhite' }}>
                 <div className="container mx-auto px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center space-x-6">
-                    <h1 className="text-2xl font-bold">stock.com</h1>
+                  <a href='/home'>
+            <h1 className="text-2xl font-bold">stock.com</h1>
+            </a>
                     <nav>
                       <ul className="flex space-x-6">
-                        <li><a href="#" className="text-gray-600 hover:text-blue-500">Explore</a></li>
-                        <li><a href="#" className="text-gray-600 hover:text-blue-600">Investments</a></li>
-                        <li><a href="#" className="text-gray-600 hover:text-blue-600">Watchlists</a></li>
+                      <li><a href="/allstock" className="text-gray-600 hover:text-primary/80">Explore</a></li>
+                <li><a href="/investment" className="text-gray-600 hover:text-primary">Investments</a></li>
+                <li><a href="/wishlist" className="text-gray-600 hover:text-primary">Watchlists</a></li>
                       </ul>
                     </nav>
                   </div>

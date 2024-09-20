@@ -18,11 +18,16 @@ const user_id =  localStorage.getItem('user_id');
 
 const addwatchlist =  async (ticker) => {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/userStock/wishlist/add/');
-    return response.data.tickers; // Adjust the return to match your API structure
+    const req ={
+      "user_id":user_id,
+      "ticker":ticker
+    }
+    console.log(req);
+    const response = await axios.post('http://127.0.0.1:8000/userStock/wishlist/add/',req);
+    response.data.message; // Adjust the return to match your API structure
   } catch (error) {
     console.error('Error fetching homepage data:', error);
-    return []; // Return an empty array on error
+     // Return an empty array on error
   }
 }
 
@@ -64,12 +69,14 @@ const handleStockClick = (ticker) => {
       <header className="border-b" style={{ backgroundColor: 'antiquewhite' }}>
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-6">
+          <a href='/home'>
             <h1 className="text-2xl font-bold">stock.com</h1>
+            </a>
             <nav>
               <ul className="flex space-x-6">
-                <li><a href="#" className="text-blue-600 hover:text-blue-500">Explore</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-blue-600">Investments</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-blue-600">Watchlists</a></li>
+              <li><a href="/allstock" className="text-black-600 hover:text-primary/80">Explore</a></li>
+                <li><a href="/investment" className="text-gray-600 hover:text-primary">Investments</a></li>
+                <li><a href="/wishlist" className="text-gray-600 hover:text-primary">Watchlists</a></li>
               </ul>
             </nav>
           </div>
@@ -121,7 +128,7 @@ const handleStockClick = (ticker) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <div className="flex space-x-2">
                       <button className="px-3 py-1 bg-blue-600 text-white rounded-md">Buy</button>
-                      <button className="px-3 py-1 border border-gray-300 text-gray-600 rounded-md flex items-center space-x-1">
+                      <button className="px-3 py-1 border border-gray-300 text-gray-600 rounded-md flex items-center space-x-1" onClick={()=>{addwatchlist(stock.ticker)}}>
                         <span>Watchlist</span>
                       </button>
                     </div>

@@ -1,8 +1,10 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Wishlist, User
-from .serializers import WishlistSerializer , UserStockSerializer
+
+from stockData.models import Graph
+from .models import UserStock, Wishlist, User
+from .serializers import WishlistSerializer , UserStockSerializer ,UserStockSerializer2
 
 @api_view(['POST'])
 def add_to_wishlist(request):
@@ -48,31 +50,31 @@ def delete_from_wishlist(request):
 @api_view(['POST'])
 def add_userstock(request):
     user_id = request.data.get('user_id')
-    ticker = request.data.get('ticker')  # Get the ticker instead of stock_id
+    ticker = request.data.get('ticker')
     
-    # Fetch the user (no need to fetch stock from Graph model)
+    # Fetch the user
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    # Populate the UserStock data with user and ticker
+    # Fetch the stock data from Graph model using ticker
+    try:
+        stock = Graph.objects.get(ticker=ticker)
+    except Graph.DoesNotExist:
+        return Response({"error": "Stock with ticker not found."}, status=status.HTTP_404_NOT_FOUND)
+
+   
     data = {
         'user': user.id,
         'ticker': ticker,
-        'purchase_price': request.data.get('purchase_price'),
-        'shares': request.data.get('shares'),
-        'sell_price': request.data.get('sell_price'),
-        'sell_date': request.data.get('sell_date'),
-        'profit_booked': request.data.get('profit_booked'),
-        'is_sell': request.data.get('is_sell')
+        'purchase_price': stock.closePrice,
+        'shares': request.data.get('shares')
     }
-
-    serializer = UserStockSerializer(data=data)
-
+    serializer = UserStockSerializer2(data=data)
     if serializer.is_valid():
         serializer.save()
-        return Response({"message": "User stock added successfully.", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({"message": "User stock added successfully."}, status=status.HTTP_201_CREATED)
     else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        print(serializer.errors)
+        return Response({"error":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

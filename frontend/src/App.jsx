@@ -31,7 +31,7 @@ function App(){
       <Route path="/graph/:ticker" element={<StockGraph />} />
       <Route path="/allstock" element={<AllStocksPage />} />
       <Route path="/wishlist" element={<Wishlist />} />
-      <Route path="/khush" element={<InvestmentsPage />} />
+      <Route path="/investment" element={<InvestmentsPage />} />
 
       </Routes>
      </Router>

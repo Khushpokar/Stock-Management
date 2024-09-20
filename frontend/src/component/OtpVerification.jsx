@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios'; // Import Axios
 import { loadStyles } from './loadstyles';
  import { useEffect } from 'react';
+ import { useNavigate } from 'react-router-dom';
 
 const OtpVerification = () => {
+    const navigate = useNavigate();
     useEffect(() => {
         // Call loadStyles with an array of paths to your CSS files
         const cleanupStyles = loadStyles();
@@ -47,6 +49,7 @@ const OtpVerification = () => {
             // Handle successful verification
             console.log('OTP verified:', response.data);
             localStorage.setItem('token',response.data.token);
+            navigate("/home");
         } catch (error) {
             // Handle errors
             if (error.response) {

@@ -68,12 +68,14 @@ export default function InvestmentsPage() {
       <header className="border-b" style={{ backgroundColor: 'antiquewhite' }}>
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-6">
+            <a href='/home'>
             <h1 className="text-2xl font-bold">stock.com</h1>
+            </a>
             <nav>
               <ul className="flex space-x-6">
-                <li><a href="#" className="text-primary hover:text-primary/80">Explore</a></li>
-                <li><a href="#" className="text-primary font-semibold">Investments</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Watchlists</a></li>
+              <li><a href="/allstock" className="text-gray-600 hover:text-primary/80">Explore</a></li>
+                <li><a href="/investment" className="text-black-600 hover:text-primary">Investments</a></li>
+                <li><a href="/wishlist" className="text-gray-600 hover:text-primary">Watchlists</a></li>
               </ul>
             </nav>
           </div>
