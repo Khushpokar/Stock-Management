@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Search, User, ArrowUp, ArrowDown } from 'lucide-react'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import { Search, User, ArrowUp, ArrowDown } from 'lucide-react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 // Custom Button component
@@ -12,7 +12,7 @@ const Button = ({ children, variant, size, ...props }) => (
   >
     {children}
   </button>
-)
+);
 
 // Custom Input component
 const Input = ({ className, ...props }) => (
@@ -20,72 +20,74 @@ const Input = ({ className, ...props }) => (
     className={`border rounded-md px-4 py-2 ${className}`}
     {...props}
   />
-)
+);
 
 // Custom Card components
 const Card = ({ children, className }) => (
   <div className={`bg-white shadow-md rounded-lg p-4 ${className}`}>{children}</div>
-)
+);
 
-const CardHeader = ({ children }) => <div className="mb-4">{children}</div>
+const CardHeader = ({ children }) => <div className="mb-4">{children}</div>;
 
-const CardTitle = ({ children }) => <h2 className="text-xl font-semibold">{children}</h2>
+const CardTitle = ({ children }) => <h2 className="text-xl font-semibold">{children}</h2>;
 
-const CardContent = ({ children }) => <div>{children}</div>
+const CardContent = ({ children }) => <div>{children}</div>;
 
 // Custom Table components
-const Table = ({ children }) => <table className="w-full table-auto">{children}</table>
+const Table = ({ children }) => <table className="w-full table-auto">{children}</table>;
 
-const TableHeader = ({ children }) => <thead>{children}</thead>
+const TableHeader = ({ children }) => <thead>{children}</thead>;
 
-const TableBody = ({ children }) => <tbody>{children}</tbody>
+const TableBody = ({ children }) => <tbody>{children}</tbody>;
 
-const TableRow = ({ children }) => <tr>{children}</tr>
+const TableRow = ({ children }) => <tr>{children}</tr>;
 
 const TableHead = ({ children, className }) => (
   <th className={`px-4 py-2 ${className}`}>{children}</th>
-)
+);
 
 const TableCell = ({ children, className }) => (
   <td className={`px-4 py-2 ${className}`}>{children}</td>
-)
+);
 
 const get_investments = async () => {
-  const req ={
-    "user_id":localStorage.getItem("user_id")
-  }
+  const req = {
+    user_id: localStorage.getItem("user_id"),
+  };
   try {
-    const response = await axios.post('http://127.0.0.1:8000/userStock/get_investments/',req);
-    return response.data.Investments; // Adjust the return to match your API structure
+    const response = await axios.post('http://127.0.0.1:8000/userStock/get_investments/', req);
+    return response.data.Investments;
   } catch (error) {
-    console.error('Error fetching homepage data:', error);
-    return []; // Return an empty array on error
+    console.error('Error fetching investments data:', error);
+    return [];
   }
 };
 
-
-
-
 export default function InvestmentsPage() {
   const navigate = useNavigate();
-  const [mockStocks,setMockStocks] = useState([]);
+  const [mockStocks, setMockStocks] = useState([]);
 
-  const totalValue = mockStocks.reduce((sum, stock) => sum + stock.currentPrice, 0)
-  const investedValue = mockStocks.reduce((sum, stock) => sum + (stock.avgCost * stock.quantity), 0)
-  const totalReturns = totalValue - investedValue
-  const totalReturnsPercentage = (totalReturns / investedValue) * 100
+  const totalValue = mockStocks.reduce((sum, stock) => sum + stock.currentPrice, 0);
+  const investedValue = mockStocks.reduce((sum, stock) => sum + (stock.avgCost * stock.quantity), 0);
+  const totalReturns = totalValue - investedValue;
+  const totalReturnsPercentage = (totalReturns / investedValue) * 100;
 
   const handleStockClick = (ticker) => {
-    navigate(`/graph/${ticker}`); // Navigate to the graph page with the selected ticker
+    navigate(`/graph/${ticker}`);
   };
 
-  useEffect(()=>{
+  const handleSellClick = (ticker) => {
+    console.log(`Sell clicked for ticker: ${ticker}`);
+    // Add sell logic here
+  };
+
+  useEffect(() => {
     const fetchInvestmentsData = async () => {
       const data = await get_investments();
-      setMockStocks(data); // Update state with the fetched data
-  };
-  fetchInvestmentsData()
-  },[]);
+      setMockStocks(data);
+    };
+    fetchInvestmentsData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -93,11 +95,11 @@ export default function InvestmentsPage() {
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <a href='/home'>
-            <h1 className="text-2xl font-bold">stock.com</h1>
+              <h1 className="text-2xl font-bold">stock.com</h1>
             </a>
             <nav>
               <ul className="flex space-x-6">
-              <li><a href="/allstock" className="text-gray-600 hover:text-primary/80">Explore</a></li>
+                <li><a href="/allstock" className="text-gray-600 hover:text-primary/80">Explore</a></li>
                 <li><a href="/investment" className="text-black-600 hover:text-primary">Investments</a></li>
                 <li><a href="/wishlist" className="text-gray-600 hover:text-primary">Watchlists</a></li>
               </ul>
@@ -150,34 +152,38 @@ export default function InvestmentsPage() {
                   <TableHead className="text-right">Qty.</TableHead>
                   <TableHead className="text-right">Avg. Cost</TableHead>
                   <TableHead className="text-right">Current Value</TableHead>
-                  <TableHead className="text-right">P&L</TableHead>
                   <TableHead className="text-right">Net Returns</TableHead>
+                  <TableHead className="text-right">Actions</TableHead> {/* Replaced P&L with Actions */}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockStocks.map((stock) => {
-                  return (
-                    <TableRow key={stock.longName}>
-                      <button onClick={()=>{handleStockClick(stock.ticker)}}>
-                        <TableCell className="font-medium">{stock.longName}</TableCell>
+                {mockStocks.map((stock) => (
+                  <TableRow key={stock.longName}>
+                    <TableCell className="font-medium">
+                      <button onClick={() => handleStockClick(stock.ticker)}>
+                        {stock.longName}
                       </button>
-                      
-                      <TableCell className="text-right">{stock.quantity}</TableCell>
-                      <TableCell className="text-right">₹{stock.avgCost.toFixed(2)}</TableCell>
-                      <TableCell className="text-right">₹{stock.currentPrice.toFixed(2)}</TableCell>
-                      <TableCell className="text-right">₹{stock.P_L.toFixed(2)}</TableCell>
-                      <TableCell className={`text-right ${stock.netReturns >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {stock.netReturns >= 0 ? <ArrowUp className="inline w-4 h-4 mr-1" /> : <ArrowDown className="inline w-4 h-4 mr-1" />}
-                        {stock.netReturns.toFixed(2)}%
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
+                    </TableCell>
+                    <TableCell className="text-right">{stock.quantity}</TableCell>
+                    <TableCell className="text-right">₹{stock.avgCost.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">₹{stock.currentPrice.toFixed(2)}</TableCell>
+                    <TableCell className={`text-right ${stock.netReturns >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {stock.netReturns >= 0 ? <ArrowUp className="inline w-4 h-4 mr-1" /> : <ArrowDown className="inline w-4 h-4 mr-1" />}
+                      {stock.netReturns.toFixed(2)}%
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {/* <Button variant="ghost" size="small" onClick={() => handleSellClick(stock.ticker)}>
+                        Sell
+                      </Button> */}
+                      <button className="px-4 py-2 bg-red-500 text-white rounded-md" onClick={() => handleSellClick(stock.ticker)}>Sell</button>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </CardContent>
         </Card>
       </main>
     </div>
-  )
+  );
 }

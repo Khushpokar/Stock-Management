@@ -51,7 +51,8 @@ def delete_from_wishlist(request):
 def add_userstock(request):
     user_id = request.data.get('user_id')
     ticker = request.data.get('ticker')
-    
+
+
     # Fetch the user
     try:
         user = User.objects.get(id=user_id)
