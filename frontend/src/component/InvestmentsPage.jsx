@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Search, User, ArrowUp, ArrowDown } from 'lucide-react'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 // Custom Button component
 const Button = ({ children, variant, size, ...props }) => (
@@ -48,20 +50,42 @@ const TableCell = ({ children, className }) => (
   <td className={`px-4 py-2 ${className}`}>{children}</td>
 )
 
-// Mock data
-const mockStocks = [
-  { name: 'Tata Steel', shares: 30, avgCost: 147.68, currentPrice: 152.82, returns: 3.48, value: 4584.60 },
-  { name: 'Suzlon Energy', shares: 25, avgCost: 89.35, currentPrice: 82.00, returns: 108.39, value: 2050.00 },
-  { name: 'Saksoft', shares: 10, avgCost: 336.73, currentPrice: 366.50, returns: 19.49, value: 3665.00 },
-  { name: 'RBL Bank', shares: 15, avgCost: 218.66, currentPrice: 216.28, returns: 0.18, value: 3244.20 },
-  { name: 'Power Grid Corp', shares: 20, avgCost: 225.50, currentPrice: 233.00, returns: 3.33, value: 4660.00 },
-]
+const get_investments = async () => {
+  const req ={
+    "user_id":localStorage.getItem("user_id")
+  }
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/userStock/get_investments/',req);
+    return response.data.Investments; // Adjust the return to match your API structure
+  } catch (error) {
+    console.error('Error fetching homepage data:', error);
+    return []; // Return an empty array on error
+  }
+};
+
+
+
 
 export default function InvestmentsPage() {
-  const totalValue = mockStocks.reduce((sum, stock) => sum + stock.value, 0)
-  const investedValue = mockStocks.reduce((sum, stock) => sum + (stock.avgCost * stock.shares), 0)
+  const navigate = useNavigate();
+  const [mockStocks,setMockStocks] = useState([]);
+
+  const totalValue = mockStocks.reduce((sum, stock) => sum + stock.currentPrice, 0)
+  const investedValue = mockStocks.reduce((sum, stock) => sum + (stock.avgCost * stock.quantity), 0)
   const totalReturns = totalValue - investedValue
   const totalReturnsPercentage = (totalReturns / investedValue) * 100
+
+  const handleStockClick = (ticker) => {
+    navigate(`/graph/${ticker}`); // Navigate to the graph page with the selected ticker
+  };
+
+  useEffect(()=>{
+    const fetchInvestmentsData = async () => {
+      const data = await get_investments();
+      setMockStocks(data); // Update state with the fetched data
+  };
+  fetchInvestmentsData()
+  },[]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -95,7 +119,7 @@ export default function InvestmentsPage() {
       <main className="container mx-auto px-4 py-8">
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Holdings (14)</CardTitle>
+            <CardTitle>Holdings ({mockStocks.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -113,10 +137,6 @@ export default function InvestmentsPage() {
                   ₹{totalReturns.toFixed(2)} ({totalReturnsPercentage.toFixed(2)}%)
                 </p>
               </div>
-              <div>
-                <p className="text-sm font-medium">1D Returns</p>
-                <p className="text-lg text-red-600">-₹214 (-0.47%)</p>
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -129,7 +149,6 @@ export default function InvestmentsPage() {
                   <TableHead>Company</TableHead>
                   <TableHead className="text-right">Qty.</TableHead>
                   <TableHead className="text-right">Avg. Cost</TableHead>
-                  <TableHead className="text-right">LTP</TableHead>
                   <TableHead className="text-right">Current Value</TableHead>
                   <TableHead className="text-right">P&L</TableHead>
                   <TableHead className="text-right">Net Returns</TableHead>
@@ -137,19 +156,19 @@ export default function InvestmentsPage() {
               </TableHeader>
               <TableBody>
                 {mockStocks.map((stock) => {
-                  const pl = stock.value - (stock.avgCost * stock.shares)
-                  const plPercentage = (pl / (stock.avgCost * stock.shares)) * 100
                   return (
-                    <TableRow key={stock.name}>
-                      <TableCell className="font-medium">{stock.name}</TableCell>
-                      <TableCell className="text-right">{stock.shares}</TableCell>
+                    <TableRow key={stock.longName}>
+                      <button onClick={()=>{handleStockClick(stock.ticker)}}>
+                        <TableCell className="font-medium">{stock.longName}</TableCell>
+                      </button>
+                      
+                      <TableCell className="text-right">{stock.quantity}</TableCell>
                       <TableCell className="text-right">₹{stock.avgCost.toFixed(2)}</TableCell>
                       <TableCell className="text-right">₹{stock.currentPrice.toFixed(2)}</TableCell>
-                      <TableCell className="text-right">₹{stock.value.toFixed(2)}</TableCell>
-                      <TableCell className="text-right">₹{pl.toFixed(2)}</TableCell>
-                      <TableCell className={`text-right ${plPercentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {plPercentage >= 0 ? <ArrowUp className="inline w-4 h-4 mr-1" /> : <ArrowDown className="inline w-4 h-4 mr-1" />}
-                        {plPercentage.toFixed(2)}%
+                      <TableCell className="text-right">₹{stock.P_L.toFixed(2)}</TableCell>
+                      <TableCell className={`text-right ${stock.netReturns >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {stock.netReturns >= 0 ? <ArrowUp className="inline w-4 h-4 mr-1" /> : <ArrowDown className="inline w-4 h-4 mr-1" />}
+                        {stock.netReturns.toFixed(2)}%
                       </TableCell>
                     </TableRow>
                   )

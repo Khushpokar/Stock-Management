@@ -15,10 +15,16 @@ import Wishlist from './component/Wishlist.jsx';
 import InvestmentsPage from './component/InvestmentsPage.jsx';
 // import './tailwind.css'; 
 // import Groww from './component/Groww.jsx';
-
+import { Toaster } from 'react-hot-toast';
 function App(){
   return (
      <Router>
+      <Toaster
+        position="bottom-right"
+        reverseOrder={true}
+        toastOptions={{ duration: 3000 }}
+        containerStyle={{ zIndex: 99 }}
+      />
       <Routes>
         <Route path="/" element={<AuthForm />} />
       <Route path="/Home" element={<HomePage />} />

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SignUpSchema , LoginSchema } from '../utils/Schema';
 import { useEffect } from 'react';
 import { loadStyles } from './loadstyles';
+import { toast } from 'react-hot-toast';
 
 
 function AuthForm() {
@@ -103,6 +104,8 @@ function AuthForm() {
         console.log(response.data.token);
         localStorage.setItem('token',response.data.token);
         navigate('/home');
+        toast.success("Login Successfully")
+       
       }
     } catch (error) {
       // Log the entire error to understand its structure
