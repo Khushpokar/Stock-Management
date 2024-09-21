@@ -1,3 +1,5 @@
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -79,6 +81,43 @@ def add_userstock(request):
     else:
         print(serializer.errors)
         return Response({"error":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+def sell_userstock(request):
+    try:
+        user_id = request.data.get('user_id')
+        ticker = request.data.get('ticker')
+        
+        if not user_id or not ticker:
+            return Response({"error": "user_id and ticker are required fields."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Step 1: Fetch the UserStock object for the given user and ticker
+        user_stock = get_object_or_404(UserStock, user_id=user_id, ticker=ticker, is_sell=False)
+        
+        # Step 2: Fetch the latest stock price from the Graph model for the given ticker
+        graph = get_object_or_404(Graph, ticker=ticker)
+        sell_price = graph.closePrice
+
+        # Step 3: Calculate the profit/loss booked
+        profit_booked = (sell_price - user_stock.purchase_price) * user_stock.shares
+
+        # Step 4: Update the UserStock instance with sell details
+        user_stock.sell_price = sell_price
+        user_stock.sell_date = timezone.now().date()
+        user_stock.profit_booked = profit_booked
+        user_stock.is_sell = True
+
+        # Step 5: Save the updated UserStock instance
+        user_stock.save()
+
+        # Step 6: Return a success response with updated details
+        response_data = {
+            "message": "Stock sold successfully.",
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+    except Exception as error:
+        return Response({"error": str(error)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def get_user_investments(request):
@@ -91,7 +130,7 @@ def get_user_investments(request):
         return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
     # Fetch the user's stock investments
-    user_stocks = UserStock.objects.filter(user=user)
+    user_stocks = UserStock.objects.filter(user=user,is_sell=False)
 
     investments = {}
 
@@ -149,3 +188,42 @@ def get_user_investments(request):
 
     # Return the final response
     return Response({"Investments": list(investments.values())}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_investments_home(request, user_id):
+    # Step 1: Fetch the unsold UserStock records for the user
+    user_stocks = UserStock.objects.filter(user_id=user_id, is_sell=False)
+
+    if not user_stocks.exists():
+        return Response({"message": "No unsold stocks found for this user."}, status=status.HTTP_404_NOT_FOUND)
+
+    total_current_value = 0
+    total_profit = 0
+
+    # Step 2: Loop through each unsold stock and calculate current value and profit
+    for stock in user_stocks:
+        # Fetch the latest stock price from the Graph model
+        graph = get_object_or_404(Graph, ticker=stock.ticker)
+        current_price = graph.closePrice
+        
+        # Calculate current value and profit
+        current_value = current_price * stock.shares
+        profit = (current_price - stock.purchase_price) * stock.shares
+
+        # Accumulate the total current value and total profit
+        total_current_value += current_value
+        total_profit += profit
+
+        # Add the stock's current value and profit to the response
+        
+
+    # Step 3: Return the JSON response with stock details, total current value, and total profit
+    response_data = {
+        "user_id": user_id,
+        "current": total_current_value,
+        "profit": total_profit
+    }
+
+    return Response(response_data, status=status.HTTP_200_OK)
+

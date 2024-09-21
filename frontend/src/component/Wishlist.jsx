@@ -17,15 +17,27 @@ const allStockData = async () => {
     }
   };
 
+  const logout = ()=>{
+    localStorage.removeItem('token')
+    localStorage.removeItem('user_id')
+    localStorage.removeItem('userName')
+  }
+
 export default function Wishlist() {
+  const [userName,setUserName] = useState();
 const navigate = useNavigate();
+const handleLogoutClick = () => {
+  logout()
+  navigate(`/`); // Navigate to the graph page with the selected ticker
+};
 const handleStockClick = (ticker) => {
     navigate(`/graph/${ticker}`); // Navigate to the graph page with the selected ticker
   };
   const [stocks, setstocks] = useState([]);
 
   useEffect(() => {
-
+    const userName = localStorage.getItem("userName");
+    setUserName(userName);
     const fetchMarketData = async () => {
         const data = await allStockData();
         setstocks(data); // Update state with the fetched data
@@ -67,17 +79,13 @@ const handleStockClick = (ticker) => {
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
-              <input
-                type="search"
-                placeholder="What are you looking for today?"
-                className="pl-8 w-64 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              {userName}
             </div>
             <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full">
               <User className="h-5 w-5" />
               <span className="sr-only">User menu</span>
             </button>
+            <button className='px-4 py-2 bg-red-500 text-white rounded-md' onClick={handleLogoutClick}>logOut</button>
           </div>
         </div>
       </header>

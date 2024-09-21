@@ -124,7 +124,7 @@ def login_view(request):
                 else:
                     return JsonResponse({"error": "Failed to send OTP. Please try again later."}, status=500)
             token=generate_jwt(user)
-            return JsonResponse({"message": "User authenticated successfully.","token":token,"userid":user.id}, status=200)
+            return JsonResponse({"message": "User authenticated successfully.","token":token,"userid":user.id,"userName":user.username}, status=200)
         else:
             return JsonResponse({"error": "Invalid username/email or password."}, status=401)
     return JsonResponse({"error": "Invalid request method."}, status=405)
@@ -144,7 +144,7 @@ def verify_view(request):
             token=generate_jwt(userdata)
             userdata.save()
             dataOpt.delete()                
-            return JsonResponse({"message": "User authenticated successfully.","token":token}, status=200)
+            return JsonResponse({"message": "User authenticated successfully.","token":token,"userName":userdata.username}, status=200)
         return JsonResponse({"error":"Invaild Otp."}, status=401)
     
 def CheckEmail(request):

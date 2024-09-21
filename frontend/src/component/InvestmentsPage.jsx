@@ -14,6 +14,12 @@ const Button = ({ children, variant, size, ...props }) => (
   </button>
 );
 
+const logout = ()=>{
+  localStorage.removeItem('token')
+  localStorage.removeItem('user_id')
+  localStorage.removeItem('userName')
+}
+
 // Custom Input component
 const Input = ({ className, ...props }) => (
   <input
@@ -63,25 +69,48 @@ const get_investments = async () => {
   }
 };
 
+const sellStock = async (ticker) => {
+  try {
+    console.log("heyy");
+    const req={
+      "user_id": localStorage.getItem("user_id"),
+      "ticker": ticker
+    }
+    console.log(req);
+    const response = await axios.post('http://127.0.0.1:8000/userStock/sellStock/sell/',req);
+    console.log(response.data); // Adjust the return to match your API structure
+    location.reload()
+  } catch (error) {
+    console.error('Error fetching homepage data:', error);
+  }
+};
+
 export default function InvestmentsPage() {
   const navigate = useNavigate();
   const [mockStocks, setMockStocks] = useState([]);
+  const [userName,setUserName] = useState();
 
   const totalValue = mockStocks.reduce((sum, stock) => sum + stock.currentPrice, 0);
   const investedValue = mockStocks.reduce((sum, stock) => sum + (stock.avgCost * stock.quantity), 0);
   const totalReturns = totalValue - investedValue;
   const totalReturnsPercentage = (totalReturns / investedValue) * 100;
 
+  const handleLogoutClick = () => {
+    logout()
+    navigate(`/`); // Navigate to the graph page with the selected ticker
+  };
+
   const handleStockClick = (ticker) => {
     navigate(`/graph/${ticker}`);
   };
 
   const handleSellClick = (ticker) => {
-    console.log(`Sell clicked for ticker: ${ticker}`);
-    // Add sell logic here
+    sellStock(ticker)
   };
 
   useEffect(() => {
+    const userName = localStorage.getItem("userName");
+    setUserName(userName);
     const fetchInvestmentsData = async () => {
       const data = await get_investments();
       setMockStocks(data);
@@ -107,13 +136,13 @@ export default function InvestmentsPage() {
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-              <Input type="search" placeholder="What are you looking for today?" className="pl-8 w-64" />
+              {userName}
             </div>
             <Button variant="ghost" size="icon">
               <User className="h-5 w-5" />
               <span className="sr-only">User menu</span>
             </Button>
+            <button className='px-4 py-2 bg-red-500 text-white rounded-md' onClick={handleLogoutClick}>logOut</button>
           </div>
         </div>
       </header>

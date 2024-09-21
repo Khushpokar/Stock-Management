@@ -55,6 +55,7 @@ class Spline extends Component {
 
     
     render() {
+        const userName = localStorage.getItem("userName");
         const { datak } = this.state;  // Destructure datak from state
         const containerProps = {
             width: "100%",
@@ -144,12 +145,7 @@ class Spline extends Component {
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="relative">
-                      <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                      <input
-                        type="search"
-                        placeholder="What are you looking for today?"
-                        className="pl-8 w-64 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
+                      {userName}
                     </div>
                     <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full">
                       <User className="h-5 w-5" />

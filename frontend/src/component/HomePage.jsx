@@ -23,6 +23,17 @@ const HomePagedata = async () => {
   }
 };
 
+const get_investments_home = async () => {
+  const user_id = Number(localStorage.getItem('user_id'))
+  try {
+    const response = await axios.get(`http://127.0.0.1:8000/userStock/get_investments_home/${user_id}/`);
+    return response.data; // Adjust the return to match your API structure
+  } catch (error) {
+    console.error('Error fetching homepage data:', error);
+    return null; // Return an empty array on error
+  }
+};
+
 const HomePagedata2 = async () => {
   try {
     const response = await axios.get('http://127.0.0.1:8000/stockGraph/home/most_traded_stock/');
@@ -32,6 +43,12 @@ const HomePagedata2 = async () => {
     return []; // Return an empty array on error
   }
 };
+
+const logout = ()=>{
+  localStorage.removeItem('token')
+  localStorage.removeItem('user_id')
+  localStorage.removeItem('userName')
+}
 
 const Update_Data = async () => {
     try {
@@ -47,18 +64,36 @@ export default function HomePage() {
   // State to hold market indices
   const [marketIndices, setMarketIndices] = useState([]);
   const [mostTradedStock, setMostTradedStock] = useState([]);
+  const [userName,setUserName] = useState();
+  const [current,setCurrent] = useState();
+  const [profit,setProfit] = useState();
 
   const navigate = useNavigate();
 
 const handleStockClick = (ticker) => {
   navigate(`/graph/${ticker}`); // Navigate to the graph page with the selected ticker
 };
+
+const handleLogoutClick = () => {
+  logout()
+  navigate(`/`); // Navigate to the graph page with the selected ticker
+};
   // Fetch data on component mount
   useEffect(() => {
+    const userName = localStorage.getItem("userName");
+    setUserName(userName);
     const token = localStorage.getItem("token");
     if  (!token) {
       navigate("/");
     }
+
+
+    const get_investments = async () => {
+      const data = await get_investments_home();
+      setCurrent(data.current)
+      setProfit(data.profit)
+       // Update state with the fetched data
+  };
 
     const fetchMarketData = async () => {
         const data = await HomePagedata();
@@ -73,6 +108,7 @@ const handleStockClick = (ticker) => {
     const update = async ()=>{
         const data = await Update_Data();
     }
+    get_investments()
     // update();
     fetchMarketData();
     fetchMarketData2();
@@ -104,13 +140,15 @@ const handleStockClick = (ticker) => {
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-              <Input type="search" placeholder="What are you looking for today?" className="pl-8 w-64" />
+              {userName}
+              {/* <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+              <Input type="search" placeholder="What are you looking for today?" className="pl-8 w-64" /> */}
             </div>
             <Button variant="ghost" size="icon">
               <User className="h-5 w-5" />
               <span className="sr-only">User menu</span>
             </Button>
+            <button className='px-4 py-2 bg-red-500 text-white rounded-md' onClick={handleLogoutClick}>logOut</button>
           </div>
         </div>
       </header>
@@ -147,11 +185,11 @@ const handleStockClick = (ticker) => {
               <CardContent className="p-6">
                 <div className="mb-4">
                   <div className="text-sm text-muted-foreground">Total Returns</div>
-                  <div className="text-3xl font-bold text-green-500">+₹5,464</div>
+                  <div className="text-3xl font-bold text-green-500">+₹{profit}</div>
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground">Current Value</div>
-                  <div className="text-3xl font-bold">₹44,519</div>
+                  <div className="text-3xl font-bold">₹{current}</div>
                 </div>
               </CardContent>
             </Card>
