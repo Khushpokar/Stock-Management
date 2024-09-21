@@ -2,6 +2,7 @@ import { Search, User, Heart } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 const allStockData = async () => {
     try {
@@ -39,6 +40,7 @@ const addwatchlist = async (ticker) => {
     };
     const response = await axios.post('http://127.0.0.1:8000/userStock/wishlist/add/', req);
     response.data.message;
+    toast.success("Added Successfully")
   } catch (error) {
     console.error('Error fetching homepage data:', error);
   }
@@ -72,6 +74,14 @@ export default function AllStocksPage() {
   const handleBuyClick = (stock) => {
     setSelectedStock(stock); // Set the selected stock for buying
     setIsPopupOpen(true); // Open the popup
+
+  };
+
+  const handleConfirmClick = (ticker,quantity) => {
+     buyStock(ticker,quantity);
+     setIsPopupOpen(false);
+     setSelectedStock(null);
+     toast.success("Buy Successfully")  
   };
 
   const handleClosePopup = () => {
@@ -175,7 +185,7 @@ export default function AllStocksPage() {
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             />
             <div className="mt-4 text-end">
-              <button className="px-4 py-2 bg-green-500 text-white rounded-md mr-2" onClick={()=>{buyStock(selectedStock?.ticker,quantity)}}>Confirm</button>
+              <button className="px-4 py-2 bg-green-500 text-white rounded-md mr-2" onClick={()=>{handleConfirmClick(selectedStock?.ticker,quantity)}}>Confirm</button>
               <button className="px-4 py-2 bg-red-500 text-white rounded-md" onClick={handleClosePopup}>Close</button>
               
             </div>

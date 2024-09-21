@@ -3,7 +3,7 @@ import axios from 'axios'; // Import Axios
 import { loadStyles } from './loadstyles';
  import { useEffect } from 'react';
  import { useNavigate } from 'react-router-dom';
-
+ import { toast } from 'react-hot-toast';
 const OtpVerification = () => {
     const navigate = useNavigate();
     useEffect(() => {
@@ -49,6 +49,7 @@ const OtpVerification = () => {
             // Handle successful verification
             console.log('OTP verified:', response.data);
             localStorage.setItem('token',response.data.token);
+            toast.success("Login Successfully")
             navigate("/home");
         } catch (error) {
             // Handle errors

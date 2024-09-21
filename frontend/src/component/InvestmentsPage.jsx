@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Search, User, ArrowUp, ArrowDown } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 // Custom Button component
 const Button = ({ children, variant, size, ...props }) => (
@@ -78,8 +79,10 @@ const sellStock = async (ticker) => {
     }
     console.log(req);
     const response = await axios.post('http://127.0.0.1:8000/userStock/sellStock/sell/',req);
-    console.log(response.data); // Adjust the return to match your API structure
+    console.log(response.data);
+    toast.success("Sell Successfully") // Adjust the return to match your API structure
     location.reload()
+    
   } catch (error) {
     console.error('Error fetching homepage data:', error);
   }
