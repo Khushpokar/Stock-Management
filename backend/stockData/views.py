@@ -179,21 +179,17 @@ class GraphView(viewsets.ModelViewSet):
             if not ticker:
                 return Response({'error': 'Ticker is required'}, status=status.HTTP_400_BAD_REQUEST)
             
-            # Validate ticker using yfinance
             stock = yf.Ticker(ticker)
             info = stock.info
             ticker = info['symbol']
             
             try:
-                # Find the Graph instance by ticker
                 graph = Graph.objects.get(ticker=ticker)
                 
-                # Delete all related GraphDateData and GraphDate instances
                 for graph_date in graph.datetime.all():
                     graph_date.datetimedata.all().delete()
                 graph.datetime.all().delete()
                 
-                # Delete the Graph instance itself
                 graph.delete()
 
                 return Response({'status': 'Data deleted successfully'}, status=status.HTTP_200_OK)
@@ -237,10 +233,8 @@ class GraphView(viewsets.ModelViewSet):
         try:
             user_id = request.data.get('user_id')
             print(user_id)
-            # Get the user object
             user = User.objects.get(id=user_id)
 
-            # Filter Wishlist entries for the user
             wishlist = Wishlist.objects.filter(user=user)
 
             tickers = wishlist.values_list('ticker', flat=True)
@@ -254,7 +248,6 @@ class GraphView(viewsets.ModelViewSet):
     
 class Update_data():
     def __init__(self) -> None:
-        # self.DataBase()
         pass
 
     def fetch_all_tickers(self):

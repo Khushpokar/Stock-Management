@@ -24,14 +24,12 @@ def send_Email(user):
         return False
     otp_code = generate_otp()
 
-        # Save OTP in the database
     otp_expiry = datetime.now() + timedelta(minutes=5)  # OTP valid for 5 minutes
     otp = OTP.objects.filter(user=user)
     if otp.exists():
         otp.delete()
     OTP.objects.create(user=user, otp_code=otp_code, expiry=otp_expiry)
 
-        # Send OTP to the user's email
     subject = 'Welcome to My App'
     message = f'Thank you for signing up for our app! Your Verification code is {otp_code} '
 
@@ -86,7 +84,6 @@ def register_view(request):
             lastname=data.get('lastname'),
         )
         user.save()
-                # Generate and send OTP
         bo = send_Email(user)
         print(bo)
         if not bo:
@@ -107,10 +104,8 @@ def login_view(request):
         if not password:
             return JsonResponse({"error": "Password is required."}, status=400)
 
-        # Hash the provided password
         hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
-        # Check if user exists with either username or email
         user = None
         if username:
             user = User.objects.filter(username=username, password=hashed_password).first()
