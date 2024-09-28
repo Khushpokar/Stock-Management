@@ -180,4 +180,4 @@ def resetVerify(request):
         if dataOpt.otp_code == otp:
             dataOpt.delete()                
             return JsonResponse({"message": "OTP verified successfully."}, status=200)
-        return JsonResponse({"error":"Invaild Otp."}, status=401)
+        return JsonResponse({"error":"Invaild Otp."}, status=401) 
