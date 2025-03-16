@@ -83,7 +83,7 @@ class Spline extends Component {
                     },
                     axisY: {
                         title: "Price",
-                        prefix: "$",
+                        prefix: "Rs",
                         tickLength: 0,
                     },
                     toolTip: {
@@ -91,8 +91,8 @@ class Spline extends Component {
                     },
                     data: [
                         {
-                            name: "Price (in USD)",
-                            yValueFormatString: "$#,###.##",
+                            name: "Price",
+                            yValueFormatString: "Rs #,###.##",
                             type: "splineArea",
                             color: "rgba(33,150,243,0.3)",
                             dataPoints: this.state.dataPoints,
@@ -103,13 +103,13 @@ class Spline extends Component {
             navigator: {
                 slider: {
                     minimum: new Date("2024-08-18"),
-                    maximum: new Date("2024-09-15"),
+                    maximum: new Date("2024-10-15"),
                 },
             },
             rangeSelector: {
                 inputFields: {
                     startValue: new Date("2024-08-18"),
-                    endValue: new Date("2024-09-15"),
+                    endValue: new Date("2024-10-15"),
                     valueFormatString: "MMM DD YYYY",
                 },
                 buttonStyle: {
@@ -119,7 +119,7 @@ class Spline extends Component {
                 },
                 buttons: [
                     {
-                        label: "1mo",
+                        label: "2mo",
                         range: 1,
                         rangeType: "month",
                     },

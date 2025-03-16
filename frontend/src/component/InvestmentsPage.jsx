@@ -113,6 +113,9 @@ export default function InvestmentsPage() {
 
   useEffect(() => {
     const userName = localStorage.getItem("userName");
+    if (!userName){
+      navigate("/");
+    }
     setUserName(userName);
     const fetchInvestmentsData = async () => {
       const data = await get_investments();

@@ -109,7 +109,7 @@ const handleLogoutClick = () => {
         const data = await Update_Data();
     }
     get_investments()
-    // update();
+    update();
     fetchMarketData();
     fetchMarketData2();
 

@@ -37,6 +37,9 @@ const handleStockClick = (ticker) => {
 
   useEffect(() => {
     const userName = localStorage.getItem("userName");
+    if (!userName){
+      navigate("/");
+    }
     setUserName(userName);
     const fetchMarketData = async () => {
         const data = await allStockData();

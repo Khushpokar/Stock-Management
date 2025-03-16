@@ -91,6 +91,9 @@ export default function AllStocksPage() {
 
   useEffect(() => {
     const userName = localStorage.getItem("userName");
+    if (!userName){
+      navigate("/");
+    }
     setUserName(userName);
 
     const fetchMarketData = async () => {
